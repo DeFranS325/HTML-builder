@@ -32,7 +32,23 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+function onExit() {
+    console.log('Goodbye, dear friend!');
+    rw.end('-============== End of file ==============-');
+    rw.close();
+    rl.close();
+}
+
+console.log('Please, input your think here: ');
 rl.on('line', (answer) => {
-    rw.write(answer);
+    if (answer === 'exit') {
+        onExit();
+        return;
+    }
+    console.log('Please, input your think here: ');
+    rw.write(`${answer}\n`);
 });
-rw.close();
+
+rl.on('SIGINT', () => {
+    onExit();
+});
