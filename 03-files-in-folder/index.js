@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { stat } = require('fs/promises');
 const path = require('path');
 const secretFolder = path.dirname(path.resolve('./index.js')) + '\\03-files-in-folder\\secret-folder\\';
 
