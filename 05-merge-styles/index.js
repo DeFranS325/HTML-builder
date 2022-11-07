@@ -35,7 +35,11 @@ function readStyleFiles(dir) {
 }
 
 function createBundle() {
-    fs.unlink(bundle, () => { readStyleFiles(stylePath); });    
+    fs.unlink(bundle, () => {
+        fs.rmdir(bundlePath, () => {
+            fs.mkdir(bundlePath, () => { readStyleFiles(stylePath); });
+        });        
+    });    
 }
 
 createBundle();
