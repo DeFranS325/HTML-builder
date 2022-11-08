@@ -82,54 +82,20 @@ function createStyleFile() {
     fs.unlink(projectCSS, () => { readStyleFiles(templateStylePath); });
 }
 
-//Append code in projectHTML file
-function replaceInFile(source, result) {
-    fs.readFile(source, 'utf-8', (errReadFile, data) => {
-        if (errReadFile) throw errReadFile;
+async function createHTMLFile() {
+    //await fs.unlink(projectHTML, () => { });
+    let innHTML = await fs.promises.readFile(templateHTML, 'utf-8');
 
-        fs.readFile(headerHTML, 'utf-8', (err, d) => {
-            if (err) throw err;
+    let sections = await fs.promises.readdir(rootPath + '\\components\\', { withFileTypes: true });
+    let sectionHTML = '';
+    for (let i = 0; i < sections.length; i++) {
+        if (sections[i].isFile() && path.extname(sections[i].name) === '.html') {
+            sectionHTML = await fs.promises.readFile(rootPath + '\\components\\' + `${sections[i].name}`);
+            innHTML = innHTML.replace(`{{${sections[i].name.slice(0, -5)}}}`, sectionHTML.toString());
+        };
+    };
+    fs.writeFile(projectHTML, innHTML, () => { });
 
-            let htmlCode = data.replace('{{header}}', d);
-            fs.writeFile(result, htmlCode, () => {
-
-                fs.readFile(source, 'utf-8', (errReadFile, data) => {
-                    if (errReadFile) throw errReadFile;
-
-                    fs.readFile(articlesHTML, 'utf-8', (err, d) => {
-                        if (err) throw err;
-
-                        let htmlCode = data.replace('{{articles}}', d);
-                        fs.writeFile(result, htmlCode, () => {
-
-                            fs.readFile(source, 'utf-8', (errReadFile, data) => {
-                                if (errReadFile) throw errReadFile;
-
-                                fs.readFile(footerHTML, 'utf-8', (err, d) => {
-                                    if (err) throw err;
-
-                                    let htmlCode = data.replace('{{footer}}', d);
-                                    fs.writeFile(result, htmlCode, () => { });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-}
-
-function createHTMLFile() {
-    fs.unlink(projectHTML, () => {
-        fs.readFile(templateHTML, 'utf-8', (errReadFile, data) => {
-            if (errReadFile) throw errReadFile;
-
-            fs.writeFile(projectHTML, data, () => {
-                replaceInFile(projectHTML, projectHTML);                
-            });
-        });
-    });
 }
 
 //Copy assets folder
@@ -143,7 +109,7 @@ function delFilesInAssets(dir) {
                 delFilesInAssets(newDir);
             }
             else {
-                fs.unlink(dir + file.name, () => {
+                fs.unlink(dir + '\\' + file.name, () => {
                     fs.rmdir(dir, () => { });
                 });
             }
