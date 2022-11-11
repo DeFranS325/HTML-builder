@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 const rootPath = __dirname;
-const bundlePath = rootPath + '\\project-dist\\';
-const stylePath = rootPath + '\\styles\\';
-const bundle = bundlePath + 'bundle.css';
+const bundlePath = path.join(rootPath, 'project-dist');
+const stylePath = path.join(rootPath, 'styles');
+const bundle = path.join(bundlePath, 'bundle.css');
 
 function addToFile(currFile) {
     fs.readFile(currFile, 'utf8', (errReadFile, data) => {
@@ -23,11 +23,11 @@ function readStyleFiles(dir) {
         for (let file of files) {
             if (path.extname(file.name) === '.css') {
                 if (file.isDirectory()) {
-                    let newPath = dir + '\\' + file.name;
+                    let newPath = path.join(dir, file.name);
                     readStyleFiles(newPath);
                 }
                 else {
-                    addToFile(dir + file.name);
+                    addToFile(path.join(dir, file.name));
                 }
             }
         }

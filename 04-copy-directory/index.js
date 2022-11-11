@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const filesFolder = path.dirname(path.resolve('./index.js')) + '\\04-copy-directory\\files\\';
-const copyFolder = path.dirname(path.resolve('./index.js')) + '\\04-copy-directory\\files-copy\\';
+const filesFolder = path.join(__dirname, 'files');
+const copyFolder = path.join(__dirname, 'files-copy');
 
 function delFilesInDir(dir) {
     fs.readdir(dir, { encoding: 'utf8', withFileTypes: true }, (err, files) => {
@@ -9,11 +9,11 @@ function delFilesInDir(dir) {
 
         for (let file of files) {
             if (file.isDirectory()) {
-                let newDir = dir + '\\' + file.name;
+                let newDir = path.join(dir, file.name);
                 delFilesInDir(newDir);
             }
             else {
-                fs.unlink(dir + file.name, () => { });
+                fs.unlink(path.join(dir, file.name), () => { });
             }
         }
     });
@@ -33,11 +33,11 @@ function copyDir(dir, newDir) {
 
             for (let file of files) {
                 if (file.isDirectory()) {
-                    fs.mkdir(dir + file.name, { recursive: true }, (error) => { if (error) throw error; });
-                    copyDir(dir + file.name, newDir + '\\' + file.name);
+                    fs.mkdir(path.join(dir, file.name), { recursive: true }, (error) => { if (error) throw error; });
+                    copyDir(path.join(dir, file.name), path.join(newDir, file.name));
                 }
                 else {
-                    fs.copyFile(dir + file.name, newDir + file.name, (errCopy) => {
+                    fs.copyFile(path.join(dir, file.name), path.join(newDir, file.name), (errCopy) => {
                         if (errCopy) throw errCopy;
                     });
                 }
